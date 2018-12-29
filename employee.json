@@ -1,0 +1,134 @@
+{
+	"CloudAffaire": [
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Debjeet"},
+                        "id":{"N":"101"},
+                        "did":{"N":"32"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1000"},
+                        "country":{"S":"India"},
+                        "state":{"S":"WB"}
+				}
+			}
+		},
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Bob"},
+                        "id":{"N":"102"},
+                        "did":{"N":"20"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1200"},
+                        "country":{"S":"US"},
+                        "state":{"S":"OH"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Stave"},
+                        "id":{"N":"103"},
+                        "did":{"N":"30"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"900"},
+                        "country":{"S":"France"},
+                        "state":{"S":"LN"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Ramesh"},
+                        "id":{"N":"104"},
+                        "did":{"N":"40"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1100"},
+                        "country":{"S":"India"},
+                        "state":{"S":"BG"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Amar"},
+                        "id":{"N":"105"},
+                        "did":{"N":"10"},
+                        "company":{"S":"Google"},
+                        "salary":{"N":"1300"},
+                        "country":{"S":"India"},
+                        "state":{"S":"CH"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Olly"},
+                        "id":{"N":"106"},
+                        "did":{"N":"20"},
+                        "company":{"S":"Google"},
+                        "salary":{"N":"1150"},
+                        "country":{"S":"US"},
+                        "state":{"S":"TX"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Bill"},
+                        "id":{"N":"107"},
+                        "did":{"N":"30"},
+                        "company":{"S":"Google"},
+                        "salary":{"N":"1400"},
+                        "country":{"S":"Germany"},
+                        "state":{"S":"BR"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Stephan"},
+                        "id":{"N":"108"},
+                        "did":{"N":"40"},
+                        "company":{"S":"Google"},
+                        "salary":{"N":"1900"},
+                        "country":{"S":"Italy"},
+                        "state":{"S":"RM"}
+                        }
+			}	
+            }, 
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Andrew"},
+                        "id":{"N":"109"},
+                        "did":{"N":"10"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1400"},
+                        "country":{"S":"France"},
+                        "state":{"S":"PS"}
+                        }
+			}	
+            },
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Anil"},
+                        "id":{"N":"110"},
+                        "did":{"N":"20"},
+                        "company":{"S":"Google"},
+                        "salary":{"N":"1500"},
+                        "country":{"S":"India"},
+                        "state":{"S":"MH"}
+                        }
+			}	
+            }           
+	]
+}

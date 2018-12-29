@@ -1,0 +1,24 @@
+{
+	"CloudAffaire": [
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Debjeet"},
+                        "id":{"N":"101"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1000"}
+				}
+			}
+		},
+		{
+			"PutRequest": {
+				"Item": {
+                        "ename":{"S":"Bob"},
+                        "id":{"N":"102"},
+                        "company":{"S":"Amazon"},
+                        "salary":{"N":"1200"}
+                }
+			}	
+        }
+    ]
+}
