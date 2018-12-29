@@ -430,3 +430,116 @@ aws dynamodb delete-table ^
 
 aws dynamodb delete-table ^
  --table-name CloudAffaire_Restore
+
+
+#######################################################################################################
+#############################################Global Tables#############################################
+#######################################################################################################
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --stream-specification StreamEnabled=TRUE,StreamViewType=NEW_AND_OLD_IMAGES ^
+ --region eu-west-1 ^
+ --output table
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --stream-specification StreamEnabled=TRUE,StreamViewType=NEW_AND_OLD_IMAGES ^
+ --region us-east-1 ^
+ --output table
+
+aws dynamodb create-global-table ^
+ --global-table-name CloudAffaire ^
+ --replication-group RegionName=eu-west-1 RegionName=us-east-1 ^
+ --region us-east-1
+
+aws dynamodb describe-global-table ^
+ --global-table-name CloudAffaire ^
+ --region us-east-1
+
+aws dynamodb describe-global-table-settings ^
+ --global-table-name CloudAffaire ^
+ --region us-east-1
+
+aws dynamodb list-global-tables ^
+ --region us-east-1
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""},""ename"":{""S"":""Debjeet""}}" ^
+ --region us-east-1
+
+aws dynamodb get-item ^
+ --table-name CloudAffaire ^
+ --key "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""}}" ^
+ --region us-east-1
+
+aws dynamodb get-item ^
+ --table-name CloudAffaire ^
+ --key "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""}}" ^
+ --region eu-west-1
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --stream-specification StreamEnabled=TRUE,StreamViewType=NEW_AND_OLD_IMAGES ^
+ --region ap-northeast-1 ^
+ --output table
+
+aws dynamodb delete-item ^
+ --table-name CloudAffaire ^
+ --key "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""}}" ^
+ --region us-east-1
+
+aws dynamodb update-global-table ^
+--global-table-name CloudAffaire ^
+--replica-updates "Create={RegionName=ap-northeast-1}" ^
+--region us-east-1
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""},""ename"":{""S"":""Debjeet""}}" ^
+ --region ap-northeast-1
+
+aws dynamodb get-item ^
+ --table-name CloudAffaire ^
+ --key "{""company"":{""S"":""Amazon""},""id"":{""N"":""101""}}" ^
+ --region ap-northeast-1
+
+aws dynamodb describe-global-table-settings ^
+ --global-table-name CloudAffaire ^
+ --region ap-northeast-1
+
+aws dynamodb update-global-table-settings ^
+ --global-table-name CloudAffaire ^
+ --global-table-provisioned-write-capacity-units 2 ^
+ --region ap-northeast-1
+
+aws dynamodb describe-global-table-settings ^
+ --global-table-name CloudAffaire ^
+ --region ap-northeast-1
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire ^
+ --region eu-west-1
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire ^
+ --region us-east-1
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire ^
+ --region ap-northeast-1
+
+eu-west-1
+us-east-1
+ap-northeast-1
+
