@@ -1,0 +1,432 @@
+Start DynamoDB Local:
+Open powershell and browse to the path where DynamoDBLocal.jar file located and run below command
+java -D"java.library.path=./DynamoDBLocal_lib" -jar DynamoDBLocal.jar -port 8001
+
+#######################################################################################################
+###############################################Basic API###############################################
+#######################################################################################################
+-------------------------------------------------------------------------------------------------------
+create-table:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=id,KeyType=HASH ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+-------------------------------------------------------------------------------------------------------
+describe-table:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb describe-table ^
+ --table-name CloudAffaire ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+-------------------------------------------------------------------------------------------------------
+list-tables:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb list-tables ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+-------------------------------------------------------------------------------------------------------
+put-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""id"": {""N"": ""100""}}" ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+batch-write-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb batch-write-item ^
+ --request-items "{""CloudAffaire"":[{""PutRequest"":{""Item"":{""id"":{""N"":""101""},""name"":{""S"":""Debjeet""}}}},{""PutRequest"":{""Item"":{""id"":{""N"":""102""},""name"":{""S"":""Steve""}}}}]}" ^
+ --endpoint-url http://localhost:8001 ^
+ --return-consumed-capacity TOTAL ^
+ --output text
+-------------------------------------------------------------------------------------------------------
+scan:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb scan ^
+ --table-name CloudAffaire ^
+ --attributes-to-get id ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodb scan ^
+ --table-name CloudAffaire ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+update-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb update-item ^
+ --table-name CloudAffaire ^
+ --key "{""id"": {""N"":""100""}}" ^
+ --update-expression "SET #A = :y" ^
+ --expression-attribute-names "{""#A"":""name""}" ^
+ --expression-attribute-values "{"":y"":{""S"":""Bob""}}" ^
+ --return-values ALL_NEW ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+get-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb get-item ^
+ --table-name CloudAffaire ^
+ --key "{""id"": {""N"":""100""}}" ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+batch-get-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb batch-get-item ^
+ --request-items "{""CloudAffaire"":{""Keys"":[{""id"": {""N"":""101""}},{""id"":{""N"":""102""}}]}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+-------------------------------------------------------------------------------------------------------
+query:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --key-condition-expression "id = :v1" ^
+ --expression-attribute-values "{"":v1"":{""N"":""101""}}" ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+delete-item:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb delete-item ^
+ --table-name CloudAffaire ^
+ --key "{""id"":{""N"":""102""}}" ^
+ --endpoint-url http://localhost:8001
+-------------------------------------------------------------------------------------------------------
+delete-table:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb delete-table ^
+ --table-name CloudAffaire ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+#######################################################################################################
+#############################################Primary Key###############################################
+#######################################################################################################
+
+-------------------------------------------------------------------------------------------------------
+Partition Key:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=id,KeyType=HASH ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+aws dynamodb batch-write-item ^
+ --request-items file://employee.json ^
+ --endpoint-url http://localhost:8001 
+
+
+aws dynamodb scan ^
+ --table-name CloudAffaire ^
+ --attributes-to-get id company ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+aws dynamodb delete-table --table-name CloudAffaire ^
+--endpoint-url http://localhost:8001 
+
+-------------------------------------------------------------------------------------------------------
+Partition key and sort key:
+-------------------------------------------------------------------------------------------------------
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+aws dynamodb batch-write-item ^
+ --request-items file://employee.json ^
+ --endpoint-url http://localhost:8001 
+
+
+aws dynamodb scan ^
+ --table-name CloudAffaire ^
+ --attributes-to-get id company ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --projection-expression "ename" ^
+ --key-condition-expression "company = :comp" ^
+ --expression-attribute-values "{"":comp"": {""S"": ""Amazon""}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --projection-expression "ename" ^
+ --key-condition-expression "company = :comp AND country = :cntry" ^
+ --expression-attribute-values "{"":comp"": {""S"": ""Amazon""},"":cntry"": {""S"": ""India""}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+aws dynamodb delete-table --table-name CloudAffaire ^
+--endpoint-url http://localhost:8001
+
+#######################################################################################################
+##########################################Seconday Indexes#############################################
+#######################################################################################################
+
+-------------------------------------------------------------------------------------------------------
+Local secondary index:
+-------------------------------------------------------------------------------------------------------
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N AttributeName=country,AttributeType=S ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --local-secondary-indexes "[{""IndexName"": ""Local_Secondary_Index"", ""KeySchema"":[{""AttributeName"":""company"",""KeyType"":""HASH""},{""AttributeName"":""country"",""KeyType"":""RANGE""}], ""Projection"":{""ProjectionType"":""ALL""}}]" ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+aws dynamodb batch-write-item ^
+ --request-items file://employee.json ^
+ --endpoint-url http://localhost:8001 
+
+
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --index-name Local_Secondary_Index ^
+ --projection-expression "ename" ^
+ --key-condition-expression "company = :comp AND country = :cntry" ^
+ --expression-attribute-values "{"":comp"": {""S"": ""Amazon""},"":cntry"": {""S"": ""India""}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --projection-expression "ename" ^
+ --key-condition-expression "did = :dptid AND country = :cntry" ^
+ --expression-attribute-values "{"":dptid"": {""N"": ""10""},"":cntry"": {""S"": ""India""}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+--------------------------------------------------------------------------------------------------------
+Global secondary index:
+--------------------------------------------------------------------------------------------------------
+aws dynamodb update-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N AttributeName=country,AttributeType=S AttributeName=did,AttributeType=N ^
+ --global-secondary-index-updates "[{""Create"":{""IndexName"":""GlobalSecondaryIndex"",""KeySchema"":[{""AttributeName"":""did"",""KeyType"":""HASH""},{""AttributeName"":""country"",""KeyType"":""RANGE""}],""Projection"":{""ProjectionType"":""ALL""},""ProvisionedThroughput"":{""ReadCapacityUnits"":1,""WriteCapacityUnits"":1}}}]" ^
+ --provisioned-throughput ReadCapacityUnits=2,WriteCapacityUnits=2 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+
+aws dynamodb query ^
+ --table-name CloudAffaire ^
+ --index-name GlobalSecondaryIndex ^
+ --projection-expression "ename" ^
+ --key-condition-expression "did = :dptid AND country = :cntry" ^
+ --expression-attribute-values "{"":dptid"": {""N"": ""10""},"":cntry"": {""S"": ""India""}}" ^
+ --endpoint-url http://localhost:8001 ^
+ --output text
+
+aws dynamodb delete-table --table-name CloudAffaire ^
+ --endpoint-url http://localhost:8001
+
+
+#######################################################################################################
+##############################################Streams##################################################
+#######################################################################################################
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=id,AttributeType=N AttributeName=ename,AttributeType=S ^
+ --key-schema AttributeName=id,KeyType=HASH AttributeName=ename,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""id"":{""N"":""100""},""ename"":{""S"":""Bob""}}" ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodb update-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=id,AttributeType=N AttributeName=ename,AttributeType=S ^
+ --stream-specification StreamEnabled=TRUE,StreamViewType=NEW_AND_OLD_IMAGES ^
+ --endpoint-url http://localhost:8001
+
+#Get LatestStreamARN from previous output
+arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636
+
+aws dynamodbstreams describe-stream ^
+ --stream-arn arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636 ^
+ --endpoint-url http://localhost:8001 ^
+ --output table
+
+#Get ShardID from previous output
+shardId-00000001546056800639-bdcc6ba3
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""id"":{""N"":""101""},""ename"":{""S"":""Debjeet""}}" ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodbstreams get-shard-iterator ^
+ --stream-arn arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636 ^
+ --shard-id shardId-00000001546056800639-bdcc6ba3 ^
+ --shard-iterator-type TRIM_HORIZON ^
+ --endpoint-url http://localhost:8001
+
+#Get shard-iterator from previous output
+aws dynamodbstreams get-records ^
+ --shard-iterator "000|arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636|c2hhcmRJZC0wMDAwMDAwMTU0NjA1NjgwMDYzOS1iZGNjNmJhM3wwMDAwMDAwMDAwMDAwMDAwMDAwNTF8MDAwMDAwMDAwMDAwMDAwMDAxNTQ2MDU2OTQ1NjM5" ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""id"":{""N"":""101""},""ename"":{""S"":""Debjeet""}}" ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodbstreams get-records ^
+ --shard-iterator "000|arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636|c2hhcmRJZC0wMDAwMDAwMTU0NjA1NjgwMDYzOS1iZGNjNmJhM3wwMDAwMDAwMDAwMDAwMDAwMDAwNTF8MDAwMDAwMDAwMDAwMDAwMDAxNTQ2MDU2OTQ1NjM5" ^
+ --endpoint-url http://localhost:8001
+
+
+aws dynamodb update-item ^
+ --table-name CloudAffaire --key "{""id"": {""N"": ""100""},""ename"": {""S"": ""Bob""}}" ^
+ --update-expression "SET #AT = :t" ^
+ --expression-attribute-names "{""#AT"":""country""}" ^
+ --expression-attribute-values "{"":t"":{""S"": ""US""}}" ^
+ --return-values UPDATED_NEW ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodbstreams get-shard-iterator ^
+ --stream-arn arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636 ^
+ --shard-id shardId-00000001546056800639-bdcc6ba3 ^
+ --shard-iterator-type TRIM_HORIZON ^
+ --endpoint-url http://localhost:8001
+
+#Get shard-iterator from previous output
+aws dynamodbstreams get-records ^
+ --shard-iterator "000|arn:aws:dynamodb:ddblocal:000000000000:table/CloudAffaire/stream/2018-12-29T04:13:20.636|c2hhcmRJZC0wMDAwMDAwMTU0NjA1NjgwMDYzOS1iZGNjNmJhM3wwMDAwMDAwMDAwMDAwMDAwMDAwNTF8MDAwMDAwMDAwMDAwMDAwMDAxNTQ2MDU2OTQ1NjM5" ^
+ --endpoint-url http://localhost:8001
+
+aws dynamodbstreams list-streams ^
+ --endpoint-url http://localhost:8001 
+
+
+aws dynamodb delete-table --table-name CloudAffaire ^
+ --endpoint-url http://localhost:8001
+
+#######################################################################################################
+##########################################Backup & Restore#############################################
+#######################################################################################################
+
+--------------------------------------------------------------------------------------------------------
+Backup:
+--------------------------------------------------------------------------------------------------------
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --output table
+
+aws dynamodb batch-write-item ^
+ --request-items file://employee-short.json  
+
+aws dynamodb create-backup ^
+ --table-name CloudAffaire ^
+ --backup-name CloudAffaireBackup  
+
+#Get backup-arn from above output 
+aws dynamodb describe-backup ^
+ --backup-arn arn:aws:dynamodb:ap-south-1:281113580004:table/CloudAffaire/backup/01546064981688-0a693e2a
+
+aws dynamodb list-backups
+
+aws dynamodb delete-table --table-name CloudAffaire
+
+--------------------------------------------------------------------------------------------------------
+Restore:
+--------------------------------------------------------------------------------------------------------
+
+aws dynamodb describe-table ^
+ --table-name CloudAffaire
+
+aws dynamodb restore-table-from-backup ^
+ --target-table-name CloudAffaire ^
+ --backup-arn arn:aws:dynamodb:ap-south-1:281113580004:table/CloudAffaire/backup/01546064981688-0a693e2a
+
+aws dynamodb describe-table ^
+ --table-name CloudAffaire
+
+#It takes some time for the table to get restored
+aws dynamodb delete-backup ^
+ --backup-arn arn:aws:dynamodb:ap-south-1:281113580004:table/CloudAffaire/backup/01546064981688-0a693e2a
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire
+
+#######################################################################################################
+#######################################Point In Time Recovery##########################################
+#######################################################################################################
+
+aws dynamodb create-table ^
+ --table-name CloudAffaire ^
+ --attribute-definitions AttributeName=company,AttributeType=S AttributeName=id,AttributeType=N ^
+ --key-schema AttributeName=company,KeyType=HASH AttributeName=id,KeyType=RANGE ^
+ --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 ^
+ --output table
+
+aws dynamodb batch-write-item ^
+ --request-items file://employee-short.json 
+
+aws dynamodb update-continuous-backups ^
+ --table-name CloudAffaire ^
+ --point-in-time-recovery-specification PointInTimeRecoveryEnabled=True
+
+aws dynamodb describe-continuous-backups ^
+ --table-name CloudAffaire
+
+#Note down the Earliest and Latest restore time
+            "EarliestRestorableDateTime": 1546068628.0,
+            "LatestRestorableDateTime": 1546068628.0
+
+aws dynamodb put-item ^
+ --table-name CloudAffaire ^
+ --item "{""company"":{""S"":""Google""},""id"":{""N"":""103""},""ename"":{""S"":""Steve""},""salary"":{""N"":""1500""}}"
+
+aws dynamodb describe-continuous-backups ^
+ --table-name CloudAffaire
+
+#Note down the Earliest and Latest restore time
+            "EarliestRestorableDateTime": 1546068628.0,
+            "LatestRestorableDateTime": 1546068628.0
+            "EarliestRestorableDateTime": 1546068628.0,
+            "LatestRestorableDateTime": 1546068811.749
+
+aws dynamodb restore-table-to-point-in-time ^
+--source-table-name CloudAffaire ^
+--target-table-name CloudAffaire_Restore ^
+--use-latest-restorable-time
+
+aws dynamodb describe-table ^
+ --table-name CloudAffaire_Restore
+
+aws dynamodb update-continuous-backups ^
+ --table-name CloudAffaire ^
+ --point-in-time-recovery-specification PointInTimeRecoveryEnabled=False
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire
+
+aws dynamodb delete-table ^
+ --table-name CloudAffaire_Restore
